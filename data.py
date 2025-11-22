@@ -193,16 +193,11 @@ def display_student():
                             print(f'Course: {g[1]}, Marks: {g[2]}, Grade: {g[3]}')
                             total += float(g[2])
                             count += 1
-                    if count > 0:
-                        print(f'Average Marks: {total / count:.2f}')
-                    else:
-                        print('No grades recorded yet.')
-                    break   #exit loop after finding student
             if not found:
                 print('Student not found!')
         else:
             raise ValueError("Sunway student ID must be 8 numbers")
-    except ValueError as reson:
+    except ValueError as reason:
         print(f'Invalid student id: {reason}')   
     except Exception as reason:
         print(f'System Error:{reason}')
