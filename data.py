@@ -28,11 +28,15 @@ grade= letter grade (A, B, C, D, F)
 Simplified design for easier understanding and viva explanation.
 """
 
-import os       #for file operations 
+import os
 
-STUDENTS_FILE = 'students.txt'
-COURSES_FILE = 'courses.txt'
-GRADES_FILE = 'grades.txt'
+# find the path of python file 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# let the text files to be in the same folder as data.py prevent file save in wrong folder
+STUDENTS_FILE = os.path.join(BASE_DIR, 'students.txt')
+COURSES_FILE = os.path.join(BASE_DIR, 'courses.txt')
+GRADES_FILE = os.path.join(BASE_DIR, 'grades.txt')
 
 def ensure_files():
     for f in [STUDENTS_FILE, COURSES_FILE, GRADES_FILE]:
@@ -266,6 +270,7 @@ def export_report():
 def main():
     ensure_files()
     while True:         #always show menu until user exit(it will break loop)
+        print(f"Files are being saved to: {os.getcwd()}")   #show current file location to help user find the .txt files 
         print('\n=== Student Grading System ===')
         print('1. Add Student')
         print('2. Add Course')
