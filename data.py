@@ -183,7 +183,7 @@ def display_student():
         print(f'System Error:{problem}')
 
 def display_course():
-    """display course performance summary by listing all students enrolled in a particular course, along with average, highest, and lowest marks"""
+    #display course performance summary by listing all students enrolled in a particular course, along with average, highest, and lowest marks
     try:
         course_id = input('Enter Course (CSC1024) : ').strip().upper()
         if not course_id:
