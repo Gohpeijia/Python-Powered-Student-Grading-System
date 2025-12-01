@@ -129,32 +129,6 @@ def marks_to_grade(marks):
     # If none of the above (0-34)
     return 'F'
 
-def get_grade_point(marks):
-    #Convert marks to Grade Point (4.0 scale) based on the image provided
-    if marks >= 90: 
-        return 4.00
-    if marks >= 80: 
-        return 4.00
-    if marks >= 75: 
-        return 3.70
-    if marks >= 70: 
-        return 3.30
-    if marks >= 65: 
-        return 3.00
-    if marks >= 60: 
-        return 2.70
-    if marks >= 55: 
-        return 2.30
-    if marks >= 50: 
-        return 2.00
-    if marks >= 45: 
-        return 1.70
-    if marks >= 40: 
-        return 1.30
-    if marks >= 35: 
-        return 1.00
-    return 0.00
-
 def record_marks():
     #get student ID
     try:
