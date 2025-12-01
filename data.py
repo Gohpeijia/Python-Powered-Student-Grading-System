@@ -101,16 +101,59 @@ def add_course():
         return
 
 def marks_to_grade(marks):
-    if marks >= 85:
+    #Assign letter grades based on the detailed grading table
+    # Pass
+    if marks >= 90: 
+        return 'A+'
+    if marks >= 80: 
         return 'A'
-    elif marks >= 70:
+    if marks >= 75: 
+        return 'A-'
+    if marks >= 70: 
+        return 'B+'
+    if marks >= 65: 
         return 'B'
-    elif marks >= 60:
+    if marks >= 60: 
+        return 'B-'
+    if marks >= 55: 
+        return 'C+'
+    if marks >= 50: 
         return 'C'
-    elif marks >= 50:
+    # Fail
+    if marks >= 45: 
+        return 'C-'
+    if marks >= 40: 
+        return 'D+'
+    if marks >= 35: 
         return 'D'
-    else:
-        return 'F'
+    # If none of the above (0-34)
+    return 'F'
+
+def get_grade_point(marks):
+    #Convert marks to Grade Point (4.0 scale) based on the image provided
+    if marks >= 90: 
+        return 4.00
+    if marks >= 80: 
+        return 4.00
+    if marks >= 75: 
+        return 3.70
+    if marks >= 70: 
+        return 3.30
+    if marks >= 65: 
+        return 3.00
+    if marks >= 60: 
+        return 2.70
+    if marks >= 55: 
+        return 2.30
+    if marks >= 50: 
+        return 2.00
+    if marks >= 45: 
+        return 1.70
+    if marks >= 40: 
+        return 1.30
+    if marks >= 35: 
+        return 1.00
+    return 0.00
 
 def record_marks():
     #get student ID
