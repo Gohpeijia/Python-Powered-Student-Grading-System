@@ -60,9 +60,12 @@ def add_student():
     except ValueError as problem:          
         print(f"Invalid input: {problem}")
         return
+    except FileNotFoundError: 
+        print("Error: The database file is missing.")
+        return
     except Exception as problem:         #exception = type of error (file missing, permission denied and more)   problem= to show why crash (shows file name) #no need raise anything about it, python will product it
-        print(f"Error saving file: {problem}")
-
+        print(f"Unexpected error occured: {problem}")
+        return
 
 def add_course():
     #to get course id, course name
@@ -88,8 +91,11 @@ def add_course():
     except ValueError as problem:  #occur when empty ID or empty name
         print(f'Invalid input {problem}, please try again:')
         return
+    except FileNotFoundError: 
+        print("Error: The database file is missing.")
+        return
     except Exception as problem:
-        print(f"Error saving file: {problem}")
+        print(f"Unexpected error occured: {problem}")
         return
 
 def marks_to_grade(marks):
@@ -131,8 +137,6 @@ def record_marks():
             raise ValueError("Student ID not found in records") #check .txt file have this student or not
      #get course ID
         course_id = input('Enter Course ID (CSC1024) : ').strip().upper()
-        if not course_id: 
-            raise ValueError("Empty input") # Check if empty, if empty force the crash(type again)
         courses = read_file(COURSES_FILE)
         course_ids = [c[0] for c in courses] #list of all course IDs in file
         if course_id not in course_ids:
@@ -141,18 +145,21 @@ def record_marks():
         marks = float(input('Enter marks (0-100): '))
         if marks < 0 or marks > 100:            # marks mut in -1<marks<101
             raise ValueError("Error: Marks must be between 0 and 100.")
-    except ValueError as problem:   # occur when user typo that cause the current id not in file
-        print(f'Invalid input: {problem}')
-        return   
     #save data
     #only run when all inputs are valid
-    try:
         grade = marks_to_grade(marks)
         with open(GRADES_FILE, 'a', encoding = "utf-8") as f:
             f.write(f'{student_id},{course_id},{marks},{grade}\n')    #format to save in files
         print(f'Success! Marks recorded. Grade = {grade}')
+    except ValueError as problem:   # occur when user typo that cause the current id not in file
+        print(f'Invalid input: {problem}')
+        return  
+    except FileNotFoundError:  
+        print("Error: The database file is missing.")
+        return
     except Exception as problem:         #'problem' will shows why error happened
-        print(f"Error saving to file: {problem}")     #output : Error saving to file: [Errno 13] Permission denied: 'grades.txt'
+        print(f"Unexpected error occured : {problem}")     #output : Error saving to file: [Errno 13] Permission denied: 'grades.txt'
+        return
 
 def display_student():
     #display individual student performance including all enrolled courses and grades
@@ -187,8 +194,11 @@ def display_student():
             raise ValueError("Sunway student ID must be 8 numbers")
     except ValueError as reason:
         print(f'Invalid student id:{reason}')   
+    except FileNotFoundError:  
+        print("Error: The database file is missing.")
+        return
     except Exception as problem:
-        print(f'System Error:{problem}')
+        print(f'Unexpected error occured:{problem}')
 
 def display_course():
     #display course performance summary by listing all students enrolled in a particular course, along with average, highest, and lowest marks
@@ -213,7 +223,6 @@ def display_course():
                 if not course_grades:
                     print('No grades recorded yet.')
                     return      # Stop here if no grades
-                
                 #Display enrolled students with marks
                 print("\nEnrolled Students:")
                 marks_list = []         
@@ -244,10 +253,15 @@ def display_course():
     except ValueError as problem:           #occur when user error input like empty course id taht can be predicted
         # Catches empty input or corrupted numbers in file
         print(f"Invalid operation: {problem}")
+        return
+    except FileNotFoundError:  
+        print("Error: The database file is missing.")
+        return
     except Exception as problem:         #occur when file missing or other crash that cant be predicted
         # Catches file missing errors or other crashes
-        print(f"An error occurred: {problem}")
+        print(f"Unexpected error occured: {problem}")
     #need two except block to separate predictable and unpredictable error
+        return
 
 def export_report():
     #export course summary or individual performance report to text file for record keeping
@@ -271,9 +285,13 @@ def export_report():
         raise ValueError('Student not found!')      
     except ValueError as problem:
         print(f"Invalid input: {problem}")
+        return
+    except FileNotFoundError:  
+        print("Error: The database file is missing.")
+        return
     except Exception as problem:
-        print(f"System Error: {problem}")
-        print('Student not found,exiting...')
+        print(f"Unexpected error occured: {problem}")
+        return
 
 def delete_student():
     #Delete a student and their associated grades based on Student ID
@@ -304,8 +322,12 @@ def delete_student():
             print("Student and their marks deleted successfully.")
         else:
             print("Deletion cancelled.")
+    except FileNotFoundError:  
+        print("Error: The database file is missing.")
+        return
     except Exception as reason:
-        print(f"Error: {reason}")
+        print(f"Unexpected error occuredr: {reason}")
+        return
 
 def delete_mark():
     #Delete a specific grade entry for a student in a specific course
@@ -327,9 +349,13 @@ def delete_mark():
             save_file(GRADES_FILE, new_grades)
             print("Mark deleted successfully.")
         else:
-            print("No matching mark record found.")  
+            print("No matching mark record found.") 
+    except FileNotFoundError:  
+        print("Error: The database file is missing.")
+        return 
     except Exception as reason:
-        print(f"Error: {reason}")       #general exception to catch all unexpected errors
+        print(f"Unexpected error occured: {reason}")       #general exception to catch all unexpected errors
+        return
 
 def edit_course():
     #Edit course details. If ID is changed, update it in grades file too
@@ -373,8 +399,12 @@ def edit_course():
             print(f"Updated {updates_count} student grade records to new Course ID.")
         save_file(COURSES_FILE, courses)
         print("Course updated successfully!")
+    except FileNotFoundError:  
+        print("Error: The database file is missing.")
+        return
     except Exception as reason:
-        print(f"Error: {reason}")
+        print(f"Unexpected error occured: {reason}")
+        return
 
 def main():
     #program's entry point and central controller by displaying menu and receiving user input, calling functions 
