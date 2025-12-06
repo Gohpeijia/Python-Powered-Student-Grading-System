@@ -1,2 +1,6 @@
+<<<<<<< HEAD
 25119520,OW QIAN YIE,25119520@imail.sunway.edu.my
 25119527,GOH PEI JIA,25119527@imail.sunway.edu.my
+=======
+25128737, GOH PEI JIA, 25128737@imail.sunway.edu.my
+>>>>>>> d6785bcc900a6d1bfa18f5bece2f2bde58eb1336
