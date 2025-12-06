@@ -47,9 +47,9 @@ def add_student():
         name = input('Enter Student Name (Name per NRIC) : ').strip().upper()
         if not name:
             raise ValueError ("Name cannot be empty")
-        if any(char.isdigit() for char in name):            #check name has numbers or not
+        elif any(char.isdigit() for char in name):            #check name has numbers or not
             raise ValueError("Name cannot contain numbers")
-        if ',' in name or '.' in name:
+        elif ',' in name or '.' in name:
             raise ValueError("Name cannot contain symbol (use space instead)")
     except ValueError as problem:
         print(f'Invalid name:{problem}')
@@ -59,8 +59,8 @@ def add_student():
         email = input('Enter Student Email (xxxxxxxx@imail.sunway.edu.my): ').strip().lower()
         if not email.endswith("@imail.sunway.edu.my"):          #ensure email ends with @imail.sunway.edu.my
             raise ValueError("Email must end with @imail.sunway.edu.my")
-    except ValueError:          #runs only no have '@imail.sunway.edu.my' in user's input
-        print("Error: No '@imail.sunway.edu.my' found in your input.")
+    except ValueError as problem:          #runs only no have '@imail.sunway.edu.my' in user's input
+        print(f"Error: {problem}")
         return
 
     #for  to file and runs when all input are correct
@@ -77,7 +77,7 @@ def add_course():
         course_id = input('Enter Course ID (CSC1024) : ').strip().upper()
         if not course_id:
             raise ValueError("Empty input") # check if empty, if empty force the crash(type again)
-        if ',' in course_id: 
+        elif ',' in course_id: 
             raise ValueError("Course ID cannot contain commas")
         courses = read_file(COURSES_FILE)
         for c in courses:
@@ -86,7 +86,7 @@ def add_course():
         course_name = input('Enter Course Name (PROGRAMMING PRINCIPLES) : ').strip().upper()
         if not course_name:
             raise ValueError("Course Name cannot be empty ") # check if empty, if empty force the crash(type again)
-        if ',' in course_name or '.' in course_name:
+        elif ',' in course_name or '.' in course_name:
             raise ValueError("Course Name cannot contain commas (use space instead)")
         #save to file if all input are valid
         with open(COURSES_FILE, 'a', encoding = "utf-8") as f:
