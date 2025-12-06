@@ -5,7 +5,7 @@ to prevent abrupt crashing of program, we use a lot of try-except block, making 
 """
 import os       #for file operations 
 import sys      #to exit gracefully
-import time    #for time delay if needed in future
+import time    #for time delay 
 
 STUDENTS_FILE = 'students.txt'
 COURSES_FILE = 'courses.txt'
