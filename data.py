@@ -434,7 +434,7 @@ def main():
         elif choice == '9': 
             edit_course()
         elif choice == '0':     #to exit cutely and gracefully by adding more fun rather than just plain exit
-            message = "Thank you for using Student Grading System powered by Ding JunChen, Goh Pei Jia, Jiang ShengJi and Ow Qian Yie 👋🏻"
+            message = "Thank you for using Student Grading System powered by Arthur Tsen Khiam Tseng, Ding JunChen, Goh Pei Jia, Jiang ShengJi and Ow Qian Yie 👋🏻"
             for char in message:
                 sys.stdout.write(char)
                 sys.stdout.flush()
