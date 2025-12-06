@@ -1,1 +1,5 @@
+<<<<<<< HEAD
+MTH1044,COMPUTER MATHEMATICS
+=======
 CSC1024,PP
+>>>>>>> d6785bcc900a6d1bfa18f5bece2f2bde58eb1336

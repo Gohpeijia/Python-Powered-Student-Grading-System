@@ -4,6 +4,8 @@ to calculate overall grades, assign letter grades, and display class performance
 to prevent abrupt crashing of program, we use a lot of try-except block, making our porgram user-friendly
 """
 import os       #for file operations 
+import sys      #to exit gracefully
+import time    #for time delay 
 
 STUDENTS_FILE = 'students.txt'
 COURSES_FILE = 'courses.txt'
@@ -18,7 +20,7 @@ def all_files():
 
 def read_file(filename):
     #Important fundamental function for all declare functions later, to only store primitive data so no error will be presented in case of empty line or spaces in user input
-    with open(filename, 'r', encoding="utf-8") as f: #prevemt error when file not found and contains special name in student name
+    with open(filename, 'r', encoding="utf-8") as f:        #prevemt error when file not found and contains special name in student name
         return [line.strip().split(',') for line in f if line.strip()]
 
 def save_file(filename, data_list): 
@@ -63,7 +65,7 @@ def add_student():
         print(f"Error: {problem}")
         return
 
-    #for  to file and runs when all input are correct
+    #save to file and runs when all input are correct
     try:
         with open(STUDENTS_FILE, 'a', encoding = "utf-8") as f:
             f.write(f'{student_id},{name},{email}\n')
@@ -92,7 +94,6 @@ def add_course():
         with open(COURSES_FILE, 'a', encoding = "utf-8") as f:
             f.write(f'{course_id},{course_name}\n')
         print('Course added successfully!')
-
     except ValueError as problem:  #occur when empty ID or empty name
         print(f'Invalid input {problem}, please try again:')
         return
@@ -101,8 +102,7 @@ def add_course():
         return
 
 def marks_to_grade(marks):
-    #Assign letter grades based on the detailed grading table
-    # Pass
+    #Assign letter grades based on the Sunway University grading scale
     if marks >= 90: 
         return 'A+'
     if marks >= 80: 
@@ -130,7 +130,7 @@ def marks_to_grade(marks):
     return 'F'
 
 def record_marks():
-    #get student ID
+    #allow users to enter marks for a student in a specific course, automatically calculating and assigning a letter grade
     try:
         student_id = int(input('Enter Student ID (251xxxxx) : ').strip())
         students = read_file(STUDENTS_FILE)
@@ -233,23 +233,29 @@ def display_course():
                 
                 #Display enrolled students with marks
                 print("\nEnrolled Students:")
-                marks_list = []
+                marks_list = []         
                 for record in course_grades:
                     student_id = record[0]
                     student_name = next((s[1] for s in students if s[0] ==student_id), "Unknown")
-                    marks = float(record[2])
+                    try: 
+                        marks = float(record[2])
+                    except ValueError:
+                        print(f"Invalid marks for student {record[2]}, skipping.")
+                        continue
                     grade = record[3]
                     marks_list.append(marks)
                     print(f"{student_name} ({student_id}): Marks = {marks}, Grade = {grade}")
-                if marks_list:  # Check if list is not empty to avoid division by zero
+
+                #Summary output
+                if marks_list: # Check if list is not empty to avoid division by zero
                     total = sum (marks_list)
                     average = total / len (marks_list)
+
+                    print("\nCourse Summary:")
                     print ('Average:',average)
-                    max_num = max(marks_list)
-                    print('Highest: ',max_num)
-                    min_num = min(marks_list)
-                    print('Lowest : ',min_num)
-                break   #exit loop after finding course
+                    print('Highest: ', max(marks_list))
+                    print('Lowest : ',min(marks_list))
+                    break   #exit loop after finding course
         if not found:
             print('Course not found!')
     except ValueError as problem:           #occur when user error input like empty course id taht can be predicted
@@ -294,11 +300,9 @@ def delete_student():
     #Delete a student and their associated grades based on Student ID
     try:
         student_id = input('Enter Student ID to DELETE (251xxxxx): ').strip()
-        
         # 1. Read existing data
         students = read_file(STUDENTS_FILE)
         grades = read_file(GRADES_FILE)
-        
         # 2. Check if student exists
         student_found = False
         new_students = []
@@ -308,14 +312,11 @@ def delete_student():
                 print(f"Deleting Student: {s[1]} ({s[0]})...")  # Show which student is being deleted
             else:
                 new_students.append(s) # Keep students that don't match in list because the list will loop one by one, will pass all students except the one to delete
-        
         if not student_found:
             print("Student ID not found.")  # if the student id not found in file
             return
-
         # 3. Remove associated grades for this student (Clean up)
-        new_grades = [g for g in grades if g[0] != student_id]
-        
+        new_grades = [g for g in grades if g[0] != student_id]  
         # 4. Save changes
         confirm = input("Are you sure? This cannot be undone (Y/N): ").strip().upper()
         if confirm == 'Y':
@@ -324,7 +325,6 @@ def delete_student():
             print("Student and their marks deleted successfully.")
         else:
             print("Deletion cancelled.")
-
     except Exception as reason:
         print(f"Error: {reason}")
 
@@ -333,11 +333,9 @@ def delete_mark():
     try:
         student_id = input('Enter Student ID (251xxxxx): ').strip()
         course_id = input('Enter Course ID to remove marks (CSC1024): ').strip().upper()
-        
         grades = read_file(GRADES_FILE)
         new_grades = []
         found = False
-        
         for g in grades:
             # Check if BOTH student ID and Course ID match
             if g[0] == student_id and g[1] == course_id:
@@ -346,13 +344,11 @@ def delete_mark():
                 # Do NOT append this to new_grades (effectively deleting it)
             else:
                 new_grades.append(g)            # Keep all other records
-        
         if found:
             save_file(GRADES_FILE, new_grades)
             print("Mark deleted successfully.")
         else:
-            print("No matching mark record found.")
-            
+            print("No matching mark record found.")  
     except Exception as reason:
         print(f"Error: {reason}")       #general exception to catch all unexpected errors
 
@@ -360,40 +356,32 @@ def edit_course():
     #Edit course details. If ID is changed, update it in grades file too
     try:
         old_id = input('Enter Course ID to EDIT (CSC1024): ').strip().upper()
-        
         courses = read_file(COURSES_FILE)
         course_index = -1
-        
         # Find the course
         for i, c in enumerate(courses):     # enumerate to get index and course data (i=index and c=course data)
             if c[0] == old_id:
                 course_index = i
                 print(f"Editing Course: {c[1]} ({c[0]})")
                 break
-        
         if course_index == -1:
             print("Course ID not found.")
             return
-
         # Get new details
         print("Press Enter to keep current value.")
         new_id = input(f"Enter New Course ID (Current: {courses[course_index][0]}): ").strip().upper()
         new_name = input(f"Enter New Course Name (Current: {courses[course_index][1]}): ").strip().upper()
-        
         # Update values if user typed something
         final_id = new_id if new_id else courses[course_index][0]
         final_name = new_name if new_name else courses[course_index][1]
-        
         # Validation: Check if new ID already exists (only if ID changed)
         if final_id != old_id:
             for c in courses:
                 if c[0] == final_id:
                     print(f"Error: Course ID {final_id} already exists!")
                     return
-
         # Update the course list
-        courses[course_index] = [final_id, final_name]
-        
+        courses[course_index] = [final_id, final_name]   
         # If ID changed, we MUST update grades.txt so marks aren't lost
         if final_id != old_id:
             grades = read_file(GRADES_FILE)
@@ -404,10 +392,8 @@ def edit_course():
                     updates_count += 1
             save_file(GRADES_FILE, grades)
             print(f"Updated {updates_count} student grade records to new Course ID.")
-
         save_file(COURSES_FILE, courses)
         print("Course updated successfully!")
-
     except Exception as reason:
         print(f"Error: {reason}")
 
@@ -447,9 +433,14 @@ def main():
             delete_mark()
         elif choice == '9': 
             edit_course()
-        elif choice == '0':
-            print('Goodbye!')
-            break
+        elif choice == '0':     #to exit cutely and gracefully by adding more fun rather than just plain exit
+            message = "Thank you for using Student Grading System powered by Arthur Tsen Khiam Tseng, Ding JunChen, Goh Pei Jia, Jiang ShengJi and Ow Qian Yie 👋🏻"
+            for char in message:
+                sys.stdout.write(char)
+                sys.stdout.flush()
+                time.sleep(0.05)
+            print()
+            sys.exit(0)
         else:
             print('Invalid choice!')
 
