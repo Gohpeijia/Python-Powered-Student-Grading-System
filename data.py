@@ -41,11 +41,7 @@ def add_student():
         for s in students:                  #prevent duplicate student ID in file
             if s[0] == str(student_id):
                 raise ValueError("Student ID already exists")   
-    except ValueError as problem:            # this shows what error (not number and not 8-digits)
-            print(f"Invalid input: {problem}")
-            return
     #get student name 
-    try:
         name = input('Enter Student Name (Name per NRIC) : ').strip().upper()
         if not name:
             raise ValueError ("Name cannot be empty")
@@ -53,25 +49,20 @@ def add_student():
             raise ValueError("Name cannot contain numbers")
         elif ',' in name or '.' in name:
             raise ValueError("Name cannot contain symbol (use space instead)")
-    except ValueError as problem:
-        print(f'Invalid name:{problem}')
-        return
     #get student email 
-    try:
         email = input('Enter Student Email (xxxxxxxx@imail.sunway.edu.my): ').strip().lower()
         if not email.endswith("@imail.sunway.edu.my"):          #ensure email ends with @imail.sunway.edu.my
             raise ValueError("Email must end with @imail.sunway.edu.my")
-    except ValueError as problem:          #runs only no have '@imail.sunway.edu.my' in user's input
-        print(f"Error: {problem}")
-        return
-
     #save to file and runs when all input are correct
-    try:
         with open(STUDENTS_FILE, 'a', encoding = "utf-8") as f:
             f.write(f'{student_id},{name},{email}\n')
         print('Student added successfully!')
+    except ValueError as problem:          
+        print(f"Invalid input: {problem}")
+        return
     except Exception as problem:         #exception = type of error (file missing, permission denied and more)   problem= to show why crash (shows file name) #no need raise anything about it, python will product it
         print(f"Error saving file: {problem}")
+
 
 def add_course():
     #to get course id, course name
@@ -105,29 +96,30 @@ def marks_to_grade(marks):
     #Assign letter grades based on the Sunway University grading scale
     if marks >= 90: 
         return 'A+'
-    if marks >= 80: 
+    elif marks >= 80: 
         return 'A'
-    if marks >= 75: 
+    elif marks >= 75: 
         return 'A-'
-    if marks >= 70: 
+    elif marks >= 70: 
         return 'B+'
-    if marks >= 65: 
+    elif marks >= 65: 
         return 'B'
-    if marks >= 60: 
+    elif marks >= 60: 
         return 'B-'
-    if marks >= 55: 
+    elif marks >= 55: 
         return 'C+'
-    if marks >= 50: 
+    elif marks >= 50: 
         return 'C'
     # Fail
-    if marks >= 45: 
+    elif marks >= 45: 
         return 'C-'
-    if marks >= 40: 
+    elif marks >= 40: 
         return 'D+'
-    if marks >= 35: 
+    elif marks >= 35: 
         return 'D'
+    else:
     # If none of the above (0-34)
-    return 'F'
+        return 'F'
 
 def record_marks():
     #allow users to enter marks for a student in a specific course, automatically calculating and assigning a letter grade
@@ -137,11 +129,7 @@ def record_marks():
         student_ids = [s[0] for s in students] #list of all student IDs in file
         if str(student_id) not in student_ids:
             raise ValueError("Student ID not found in records") #check .txt file have this student or not
-    except ValueError as problem:   # occur when user typo that cause the current id not in file
-        print(f'Invalid input: {problem}')
-        return    
-    #get course ID
-    try:
+     #get course ID
         course_id = input('Enter Course ID (CSC1024) : ').strip().upper()
         if not course_id: 
             raise ValueError("Empty input") # Check if empty, if empty force the crash(type again)
@@ -149,22 +137,17 @@ def record_marks():
         course_ids = [c[0] for c in courses] #list of all course IDs in file
         if course_id not in course_ids:
             raise ValueError("Course ID not found in records")  #raise error if course id not found in file
-    except ValueError as problem:          #check .txt file have this course or not
-        print(f'Error:{problem}.Please add course first.')
-        return
     #get marks
-    try:
         marks = float(input('Enter marks (0-100): '))
         if marks < 0 or marks > 100:            # marks mut in -1<marks<101
-            print("Error: Marks must be between 0 and 100.")
-            return # STOP here
-    except ValueError:
-        print('Error: Marks must be a number (80.5)')
-        return
+            raise ValueError("Error: Marks must be between 0 and 100.")
+    except ValueError as problem:   # occur when user typo that cause the current id not in file
+        print(f'Invalid input: {problem}')
+        return   
     #save data
     #only run when all inputs are valid
-    grade = marks_to_grade(marks)
     try:
+        grade = marks_to_grade(marks)
         with open(GRADES_FILE, 'a', encoding = "utf-8") as f:
             f.write(f'{student_id},{course_id},{marks},{grade}\n')    #format to save in files
         print(f'Success! Marks recorded. Grade = {grade}')
@@ -290,11 +273,7 @@ def export_report():
         print(f"Invalid input: {problem}")
     except Exception as problem:
         print(f"System Error: {problem}")
-        raise ValueError('Student not found,exiting...')      
-    except ValueError as reason:
-        print(f"Invalid input: {reason}")
-    except Exception as reason:
-        print(f"System Error: {reason}")
+        print('Student not found,exiting...')
 
 def delete_student():
     #Delete a student and their associated grades based on Student ID
