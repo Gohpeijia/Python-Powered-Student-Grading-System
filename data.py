@@ -11,25 +11,10 @@ STUDENTS_FILE = 'students.txt'
 COURSES_FILE = 'courses.txt'
 GRADES_FILE = 'grades.txt'
 
-def all_files():
-    #Ensure that required data files exist by creating empty files for students, courses, and grades if missing
-    for f in [STUDENTS_FILE, COURSES_FILE, GRADES_FILE]:
-        if not os.path.exists(f):
-            with open(f, 'w', encoding="utf-8"): #all of our codes uses with open() syntax for auto closing of files
-                pass
-
 def read_file(filename):
     #Important fundamental function for all declare functions later, to only store primitive data so no error will be presented in case of empty line or spaces in user input
     with open(filename, 'r', encoding="utf-8") as f:        #prevemt error when file not found and contains special name in student name
         return [line.strip().split(',') for line in f if line.strip()]
-
-def save_file(filename, data_list): 
-    #takes the data from memory and permanently writes it back to the text file, this function is used in delete functions
-    # WARNING: This wipes the old file clean immediately!
-    with open(filename, 'w', encoding="utf-8") as f: 
-        for line in data_list:
-            # It writes the updated list back into the file
-            f.write(','.join(map(str, line)) + '\n')
 
 def add_student():
     #get student personal information such as student ID specifically only in 8 digits format, name, email 
@@ -57,6 +42,8 @@ def add_student():
         with open(STUDENTS_FILE, 'a', encoding = "utf-8") as f:
             f.write(f'{student_id},{name},{email}\n')
         print('Student added successfully!')
+
+    #robust error-handling
     except ValueError as problem:          
         print(f"Invalid input: {problem}")
         return
@@ -88,6 +75,8 @@ def add_course():
         with open(COURSES_FILE, 'a', encoding = "utf-8") as f:
             f.write(f'{course_id},{course_name}\n')
         print('Course added successfully!')
+
+    #robust error-handling
     except ValueError as problem:  #occur when empty ID or empty name
         print(f'Invalid input {problem}, please try again:')
         return
@@ -151,6 +140,8 @@ def record_marks():
         with open(GRADES_FILE, 'a', encoding = "utf-8") as f:
             f.write(f'{student_id},{course_id},{marks},{grade}\n')    #format to save in files
         print(f'Success! Marks recorded. Grade = {grade}')
+
+    #robust error-handling
     except ValueError as problem:   # occur when user typo that cause the current id not in file
         print(f'Invalid input: {problem}')
         return  
@@ -185,9 +176,12 @@ def display_student():
                             print(f'Course: {g[1]}, Marks: {g[2]}, Grade: {g[3]}')
                             total += float(g[2])
                             count += 1
+
                     if count ==0:
                         print('No grades recorded yet.')
                     break   #exit loop after finding student
+
+            #robust error-handling        
             if not found:
                 print('Student not found!')
         else:
@@ -231,6 +225,7 @@ def display_course():
                     student_name = next((s[1] for s in students if s[0] ==student_id), "Unknown")
                     try: 
                         marks = float(record[2])
+
                     except ValueError:
                         print(f"Invalid marks for student {record[2]}, skipping.")
                         continue
@@ -244,10 +239,12 @@ def display_course():
                     average = total / len (marks_list)
 
                     print("\nCourse Summary:")
-                    print ('Average:',average)
+                    print ('Average:', average)
                     print('Highest: ', max(marks_list))
-                    print('Lowest : ',min(marks_list))
+                    print('Lowest : ', min(marks_list))
                     break   #exit loop after finding course
+
+        #robust error-handling
         if not found:
             print('Course not found!')
     except ValueError as problem:           #occur when user error input like empty course id taht can be predicted
@@ -275,13 +272,15 @@ def export_report():
             if s[0] == student_id:
                 grades = read_file(GRADES_FILE)
                 filename = f'report_{student_id}.txt'
-                with open(filename, 'w') as f:
+                with open(filename, 'w', encoding="utf-8") as f:
                     f.write(f'Student: {s[1]} ({s[0]})\nEmail: {s[2]}\n\n')
                     for g in grades:
                         if g[0] == student_id:
                             f.write(f'Course: {g[1]}, Marks: {g[2]}, Grade: {g[3]}\n')
                 print(f'Report saved as {filename}')
                 return
+
+        #robust error-handling    
         raise ValueError('Student not found!')      
     except ValueError as problem:
         print(f"Invalid input: {problem}")
@@ -292,6 +291,15 @@ def export_report():
     except Exception as problem:
         print(f"Unexpected error occured: {problem}")
         return
+
+#set for delete functions to overwrite files
+def save_file(filename, data_list): 
+    #takes the data from memory and permanently writes it back to the text file, this function is used in delete functions
+    # WARNING: This wipes the old file clean immediately!
+    with open(filename, 'w', encoding="utf-8") as f: 
+        for line in data_list:
+            # It writes the updated list back into the file
+            f.write(','.join(map(str, line)) + '\n')
 
 def delete_student():
     #Delete a student and their associated grades based on Student ID
@@ -320,6 +328,8 @@ def delete_student():
             save_file(STUDENTS_FILE, new_students)
             save_file(GRADES_FILE, new_grades)
             print("Student and their marks deleted successfully.")
+        
+        #robust error-handling
         else:
             print("Deletion cancelled.")
     except FileNotFoundError:  
@@ -348,6 +358,8 @@ def delete_mark():
         if found:
             save_file(GRADES_FILE, new_grades)
             print("Mark deleted successfully.")
+
+        #robust error-handling    
         else:
             print("No matching mark record found.") 
     except FileNotFoundError:  
@@ -399,6 +411,8 @@ def edit_course():
             print(f"Updated {updates_count} student grade records to new Course ID.")
         save_file(COURSES_FILE, courses)
         print("Course updated successfully!")
+    
+    #robust error-handling
     except FileNotFoundError:  
         print("Error: The database file is missing.")
         return
@@ -406,6 +420,13 @@ def edit_course():
         print(f"Unexpected error occured: {reason}")
         return
 
+#set for main function    
+def all_files():
+    #Ensure that required data files exist by creating empty files for students, courses, and grades if missing
+    for f in [STUDENTS_FILE, COURSES_FILE, GRADES_FILE]:
+        if not os.path.exists(f):
+            with open(f, 'w', encoding="utf-8"): #all of our codes uses with open() syntax for auto closing of files
+                pass
 def main():
     #program's entry point and central controller by displaying menu and receiving user input, calling functions 
     all_files()
