@@ -427,6 +427,7 @@ def all_files():
         if not os.path.exists(f):
             with open(f, 'w', encoding="utf-8"): #all of our codes uses with open() syntax for auto closing of files
                 pass
+
 def main():
     #program's entry point and central controller by displaying menu and receiving user input, calling functions 
     all_files()
@@ -473,6 +474,13 @@ def main():
             sys.exit(0)
         else:
             print('Invalid choice!')
+        
+        #to clear screen after each operation for better user experience
+        time.sleep(2)  #pause for 2 seconds before clearing screen
+        if os.name == "posix":
+            os.system('clear')  #for linux and macOS
+        elif:
+            os.system('cls')    #for windows
 
 if __name__ == '__main__':
     main()
