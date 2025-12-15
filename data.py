@@ -441,9 +441,9 @@ def main():
         print('5. Display Course Summary')
         print('6. Export Student Report')
         print('--- EDIT / DELETE ---')
-        print('7. Delete Student (Fix Typo/Remove)')
-        print('8. Delete Specific Mark (Fix Wrong Entry)')
-        print('9. Edit Course (Rename/Fix Typo)')
+        print('7. Delete Student')
+        print('8. Delete Mark for Courses')
+        print('9. Edit Course)')
         print('0. Exit')
         choice = input('Enter choice: ').strip()
         if choice == '1': 
