@@ -442,7 +442,7 @@ def main():
         print('6. Export Student Report')
         print('--- EDIT / DELETE ---')
         print('7. Delete Student')
-        print('8. Delete Mark for Courses')
+        print('8. Delete Marks for Course')
         print('9. Edit Course)')
         print('0. Exit')
         choice = input('Enter choice: ').strip()
