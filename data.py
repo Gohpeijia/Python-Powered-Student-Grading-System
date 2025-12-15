@@ -479,7 +479,7 @@ def main():
         time.sleep(2)  #pause for 2 seconds before clearing screen
         if os.name == "posix":
             os.system('clear')  #for linux and macOS
-        elif:
+        elif os.name == "nt":
             os.system('cls')    #for windows
 
 if __name__ == '__main__':
