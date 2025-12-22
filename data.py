@@ -19,7 +19,7 @@ def read_file(filename):
 def add_student():
     #get student personal information such as student ID specifically only in 8 digits format, name, email 
     try:
-        student_id = int(input('Enter Student ID (251xxxxx) : ').strip())
+        student_id = int(input('Enter Student ID (251xxxxx): ').strip())
         if len(str(student_id)) != 8:          #must change to str because len() only works on string
             raise ValueError("Sunway student ID must be 8 digits")
         students = read_file(STUDENTS_FILE)
@@ -35,9 +35,8 @@ def add_student():
         elif ',' in name or '.' in name:
             raise ValueError("Name cannot contain symbol (use space instead)")
     #get student email 
-        email = input('Enter Student Email (xxxxxxxx@imail.sunway.edu.my): ').strip().lower()
-        if not email.endswith("@imail.sunway.edu.my"):          #ensure email ends with @imail.sunway.edu.my
-            raise ValueError("Email must end with @imail.sunway.edu.my")
+        email = f"{str(student_id)}@imail.sunway.edu.my" 
+        print(f"Student Email: {email}")
     #save to file and runs when all input are correct
         with open(STUDENTS_FILE, 'a', encoding = "utf-8") as f:
             f.write(f'{student_id},{name},{email}\n')
@@ -46,18 +45,13 @@ def add_student():
     #robust error-handling
     except ValueError as problem:          
         print(f"Invalid input: {problem}")
-        return
-    except FileNotFoundError: 
-        print("Error: The database file is missing.")
-        return
     except Exception as problem:         #exception = type of error (file missing, permission denied and more)   problem= to show why crash (shows file name) #no need raise anything about it, python will product it
-        print(f"Unexpected error occured: {problem}")
-        return
+        print(f"Unexpected error occurred: {problem}")
 
 def add_course():
     #to get course id, course name
     try:
-        course_id = input('Enter Course ID (CSC1024) : ').strip().upper()
+        course_id = input('Enter Course ID (CSC1024): ').strip().upper()
         if not course_id:
             raise ValueError("Empty input") # check if empty, if empty force the crash(type again)
         elif ',' in course_id: 
@@ -78,14 +72,9 @@ def add_course():
 
     #robust error-handling
     except ValueError as problem:  #occur when empty ID or empty name
-        print(f'Invalid input {problem}, please try again:')
-        return
-    except FileNotFoundError: 
-        print("Error: The database file is missing.")
-        return
+        print(f'Invalid input {problem}. Please try again.')
     except Exception as problem:
-        print(f"Unexpected error occured: {problem}")
-        return
+        print(f"Unexpected error occurred: {problem}")
 
 def marks_to_grade(marks):
     #Assign letter grades based on the Sunway University grading scale
@@ -119,7 +108,7 @@ def marks_to_grade(marks):
 def record_marks():
     #allow users to enter marks for a student in a specific course, automatically calculating and assigning a letter grade
     try:
-        student_id = int(input('Enter Student ID (251xxxxx) : ').strip())
+        student_id = int(input('Enter Student ID (251xxxxx): ').strip())
         students = read_file(STUDENTS_FILE)
         student_ids = [s[0] for s in students] #list of all student IDs in file
         if str(student_id) not in student_ids:
@@ -143,56 +132,41 @@ def record_marks():
 
     #robust error-handling
     except ValueError as problem:   # occur when user typo that cause the current id not in file
-        print(f'Invalid input: {problem}')
-        return  
-    except FileNotFoundError:  
-        print("Error: The database file is missing.")
-        return
+        print(f'Invalid input: {problem}') 
     except Exception as problem:         #'problem' will shows why error happened
-        print(f"Unexpected error occured : {problem}")     #output : Error saving to file: [Errno 13] Permission denied: 'grades.txt'
-        return
+        print(f"Unexpected error occurred : {problem}")     #output : Error saving to file: [Errno 13] Permission denied: 'grades.txt'
 
 def display_student():
     #display individual student performance including all enrolled courses and grades
     try:
-        student_id = input('Enter Student ID (251xxxxx) : ').strip()
-        student_id = str(int(student_id))           #convert to string for len() check
-        if len(str(student_id)) == 8:
+        student_id = input('Enter Student ID (251xxxxx): ').strip()
+        if len(student_id) == 8:
             #studet's data will be read from file
-            students = read_file(STUDENTS_FILE)
+            students = read_file(STUDENTS_FILE) #to get student name and email
             grades = read_file(GRADES_FILE)
-            found = False
-            for s in students:
-                if s[0] == student_id:
-                    found = True            #if found student, then display info
-                    print(f'\nStudent: {s[1]} ({s[0]})')
-                    print('Email:', s[2])
-                    print('\nCourses and Grades:')
-                    total = 0
-                    count = 0
-                    for g in grades:
-                        #check grades file for matching student id
-                        if g[0] == student_id:
-                            print(f'Course: {g[1]}, Marks: {g[2]}, Grade: {g[3]}')
-                            total += float(g[2])
-                            count += 1
+            try: 
+                student_record = next(s for s in students if s[0] == student_id)  #get student record
+                print(f'Student: {student_record[1]} ({student_record[0]})')
+                print('Email:', student_record[2])
+                print('\nCourses and Grades:')
+                total = 0 #to process grades
+                count = 0
 
-                    if count ==0:
-                        print('No grades recorded yet.')
-                    break   #exit loop after finding student
-
-            #robust error-handling        
-            if not found:
-                print('Student not found!')
+                for g in grades:
+                    if g[0] == student_id:
+                        print(f'Course: {g[1]}, Marks: {g[2]}, Grade: {g[3]}')
+                        total += float(g[2])
+                        count+=1
+                if count ==0:
+                    print("Error: Student hasn't recorded any grades yet.")
+            except StopIteration:
+                print("Error: Student ID not found in database")       
         else:
-            raise ValueError("Sunway student ID must be 8 numbers")
+            raise ValueError("Sunway student ID must be 8 numbers.")
     except ValueError as reason:
         print(f'Invalid student id:{reason}')   
-    except FileNotFoundError:  
-        print("Error: The database file is missing.")
-        return
     except Exception as problem:
-        print(f'Unexpected error occured:{problem}')
+        print(f'Unexpected error occurred:{problem}')
 
 def display_course():
     #display course performance summary by listing all students enrolled in a particular course, along with average, highest, and lowest marks
@@ -204,10 +178,9 @@ def display_course():
         courses = read_file(COURSES_FILE)
         grades = read_file(GRADES_FILE)
         students = read_file(STUDENTS_FILE)
-        
+
         found = False
-        for c in courses:
-                #look for course id in courses file
+        for c in courses:    #look for course id in courses file
             if c[0] == course_id:
                 found = True
                 print(f'\nCourse: {c[1]} ({c[0]})')
@@ -225,40 +198,30 @@ def display_course():
                     student_name = next((s[1] for s in students if s[0] ==student_id), "Unknown")
                     try: 
                         marks = float(record[2])
-
                     except ValueError:
                         print(f"Invalid marks for student {record[2]}, skipping.")
                         continue
                     grade = record[3]
                     marks_list.append(marks)
                     print(f"{student_name} ({student_id}): Marks = {marks}, Grade = {grade}")
-
                 #Summary output
                 if marks_list: # Check if list is not empty to avoid division by zero
                     total = sum (marks_list)
                     average = total / len (marks_list)
-
                     print("\nCourse Summary:")
                     print ('Average:', average)
                     print('Highest: ', max(marks_list))
                     print('Lowest : ', min(marks_list))
                     break   #exit loop after finding course
-
         #robust error-handling
         if not found:
             print('Course not found!')
     except ValueError as problem:           #occur when user error input like empty course id taht can be predicted
         # Catches empty input or corrupted numbers in file
         print(f"Invalid operation: {problem}")
-        return
-    except FileNotFoundError:  
-        print("Error: The database file is missing.")
-        return
     except Exception as problem:         #occur when file missing or other crash that cant be predicted
         # Catches file missing errors or other crashes
-        print(f"Unexpected error occured: {problem}")
-    #need two except block to separate predictable and unpredictable error
-        return
+        print(f"Unexpected error occurred: {problem}")
 
 def export_report():
     #export course summary or individual performance report to text file for record keeping
@@ -284,13 +247,8 @@ def export_report():
         raise ValueError('Student not found!')      
     except ValueError as problem:
         print(f"Invalid input: {problem}")
-        return
-    except FileNotFoundError:  
-        print("Error: The database file is missing.")
-        return
     except Exception as problem:
-        print(f"Unexpected error occured: {problem}")
-        return
+        print(f"Unexpected error occurred: {problem}")
 
 #set for delete functions to overwrite files
 def save_file(filename, data_list): 
@@ -328,16 +286,11 @@ def delete_student():
             save_file(STUDENTS_FILE, new_students)
             save_file(GRADES_FILE, new_grades)
             print("Student and their marks deleted successfully.")
-        
         #robust error-handling
         else:
             print("Deletion cancelled.")
-    except FileNotFoundError:  
-        print("Error: The database file is missing.")
-        return
     except Exception as reason:
-        print(f"Unexpected error occuredr: {reason}")
-        return
+        print(f"Unexpected error occurred: {reason}")
 
 def delete_mark():
     #Delete a specific grade entry for a student in a specific course
@@ -358,16 +311,11 @@ def delete_mark():
         if found:
             save_file(GRADES_FILE, new_grades)
             print("Mark deleted successfully.")
-
         #robust error-handling    
         else:
             print("No matching mark record found.") 
-    except FileNotFoundError:  
-        print("Error: The database file is missing.")
-        return 
     except Exception as reason:
-        print(f"Unexpected error occured: {reason}")       #general exception to catch all unexpected errors
-        return
+        print(f"Unexpected error occurred: {reason}")       #general exception to catch all unexpected errors
 
 def edit_course():
     #Edit course details. If ID is changed, update it in grades file too
@@ -411,14 +359,9 @@ def edit_course():
             print(f"Updated {updates_count} student grade records to new Course ID.")
         save_file(COURSES_FILE, courses)
         print("Course updated successfully!")
-    
     #robust error-handling
-    except FileNotFoundError:  
-        print("Error: The database file is missing.")
-        return
     except Exception as reason:
-        print(f"Unexpected error occured: {reason}")
-        return
+        print(f"Unexpected error occurred: {reason}")
 
 #set for main function    
 def all_files():
@@ -481,7 +424,5 @@ def main():
             os.system('clear')  #for linux and macOS
         elif os.name == "nt":
             os.system('cls')    #for windows
-
 if __name__ == '__main__':
     main()
-
