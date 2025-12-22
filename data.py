@@ -408,6 +408,8 @@ def main():
         elif choice == '9': 
             edit_course()
         elif choice == '0':     #to exit cutely and gracefully by adding more fun rather than just plain exit
+            if sys.stdout.encoding != 'utf-8':
+                sys.stdout.reconfigure(encoding='utf-8')
             message = "Thank you for using Student Grading System powered by Arthur Tsen Khiam Tseng, Ding JunChen, Goh Pei Jia, Jiang ShengJi and Ow Qian Yie 👋🏻"
             for char in message:
                 sys.stdout.write(char)
@@ -417,12 +419,8 @@ def main():
             sys.exit(0)
         else:
             print('Invalid choice!')
-        
         #to clear screen after each operation for better user experience
-        time.sleep(2)  #pause for 2 seconds before clearing screen
-        if os.name == "posix":
-            os.system('clear')  #for linux and macOS
-        elif os.name == "nt":
-            os.system('cls')    #for windows
+        time.sleep(4)  #pause for 4 seconds before clearing screen
+        os.system('clear' if os.name == "posix" else 'cls')  #for linux and macOS
 if __name__ == '__main__':
     main()
