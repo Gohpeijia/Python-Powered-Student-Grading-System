@@ -3,6 +3,7 @@ to develop a Student Grading System that manages student records and assessment 
 to calculate overall grades, assign letter grades, and display class performance summaries
 to prevent abrupt crashing of program, we use a lot of try-except block, making our porgram user-friendly
 """
+
 import os       #for file operations 
 import sys      #to exit gracefully
 import time    #for time delay 
@@ -422,6 +423,11 @@ def main():
             print('Invalid choice!')
         #to clear screen after each operation for better user experience
         time.sleep(4)  #pause for 4 seconds before clearing screen
-        os.system('clear' if os.name == "posix" else print('\n' * 50))  #for linux and macOS
+
+        if os.name == "posix":
+            os.system('clear')  #for linux and macOS
+        elif os.name == "nt":
+            print('\n' * 50)    #for windows
+
 if __name__ == '__main__':
     main()
