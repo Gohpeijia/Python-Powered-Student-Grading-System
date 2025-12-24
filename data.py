@@ -293,7 +293,7 @@ def delete_student():
         print(f"Unexpected error occurred: {reason}")
 
 def delete_mark():
-    #Delete a specific grade entry for a student in a specific course
+    #Delete grade entries for a student in a specific course
     try:
         student_id = input('Enter Student ID (251xxxxx): ').strip()
         course_id = input('Enter Course ID to remove marks (CSC1024): ').strip().upper()
