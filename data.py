@@ -200,6 +200,7 @@ def display_course():
         course_id = input('Enter Course (CSC1024) : ').strip().upper()
         if not course_id:
             raise ValueError("Course ID cannot be empty") # check if empty, if empty force the crash(type again)
+            
         #real data from files
         courses = read_file(COURSES_FILE)
         grades = read_file(GRADES_FILE)
@@ -480,7 +481,7 @@ def main():
         if os.name == "posix":
             os.system('clear')  #for linux and macOS
         elif os.name == "nt":
-            os.system('cls')    #for windows
+            print('\n' * 50)    #for windows
 
 if __name__ == '__main__':
     main()
