@@ -211,7 +211,7 @@ def display_course():
                     print("\nCourse Summary:")
                     print ('Average:', average)
                     print('Highest: ', max(marks_list))
-                    print('Lowest : ', min(marks_list))
+                    print('Lowest: ', min(marks_list))
                     break   #exit loop after finding course
         #robust error-handling
         if not found:
