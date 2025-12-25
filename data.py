@@ -338,7 +338,7 @@ def edit_course():
         print("Press Enter to keep current value.")
         new_id = input(f"Enter New Course ID (Current: {courses[course_index][0]}): ").strip().upper()
         new_name = input(f"Enter New Course Name (Current: {courses[course_index][1]}): ").strip().upper()
-        # Update values if user typed something
+        # Update values if user typed somethi,,ng
         final_id = new_id if new_id else courses[course_index][0]
         final_name = new_name if new_name else courses[course_index][1]
         # Validation: Check if new ID already exists (only if ID changed)
@@ -347,10 +347,6 @@ def edit_course():
                 if c[0] == final_id:
                     print(f"Error: Course ID {final_id} already exists!")
                     return
-        # Update the course list
-        courses[course_index] = [final_id, final_name]   
-        # If ID changed, we MUST update grades.txt so marks aren't lost
-        if final_id != old_id:
             grades = read_file(GRADES_FILE)
             updates_count = 0
             for g in grades:
@@ -359,6 +355,8 @@ def edit_course():
                     updates_count += 1
             save_file(GRADES_FILE, grades)
             print(f"Updated {updates_count} student grade records to new Course ID.")
+        #Finally, update the course list in memory and save
+        courses[course_index] = [final_id, final_name]  
         save_file(COURSES_FILE, courses)
         print("Course updated successfully!")
     #robust error-handling
@@ -424,10 +422,7 @@ def main():
         #to clear screen after each operation for better user experience
         time.sleep(4)  #pause for 4 seconds before clearing screen
 
-        if os.name == "posix":
-            os.system('clear')  #for linux and macOS
-        elif os.name == "nt":
-            print('\n' * 50)    #for windows
+        os.system('clear' if os.name == 'posix' else print("'\n' * 50"))  #cross-platform clear screen
 
 if __name__ == '__main__':
     main()
